@@ -1,62 +1,282 @@
-# Express.js RESTful API Assignment
+# 🧩Express.js – RESTful API Project
 
-This assignment focuses on building a RESTful API using Express.js, implementing proper routing, middleware, and error handling.
+## 🚀 Objective
+Build a RESTful API using **Express.js** that supports CRUD operations, proper routing, middleware (logging, authentication, validation), and error handling — plus advanced features like filtering, pagination, and search.
 
-## Assignment Overview
+---
 
-You will:
-1. Set up an Express.js server
-2. Create RESTful API routes for a product resource
-3. Implement custom middleware for logging, authentication, and validation
-4. Add comprehensive error handling
-5. Develop advanced features like filtering, pagination, and search
+## 🛠️ Setup Instructions
 
-## Getting Started
+### 1️⃣ Prerequisites
+- Node.js **v18 or higher**
+- npm (comes with Node)
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Install dependencies:
-   ```
-   npm install
-   ```
-4. Run the server:
-   ```
-   npm start
-   ```
+### 2️⃣ Installation
+Clone your GitHub Classroom repository and install dependencies:
 
-## Files Included
+```bash
+git clone <your-repo-url>
+cd week2-express-api
+npm install
 
-- `Week2-Assignment.md`: Detailed assignment instructions
-- `server.js`: Starter Express.js server file
-- `.env.example`: Example environment variables file
+3️⃣ Environment Variables
+Create a .env file in the root directory:
 
-## Requirements
+env
+Copy code
+PORT=3000
+API_KEY=mysecretapikey123
+The API_KEY will be required for creating, updating, and deleting products.
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Postman, Insomnia, or curl for API testing
+4️⃣ Run the Server
+Start the server with:
 
-## API Endpoints
+bash
+Copy code
+node server.js
+Or (if you have nodemon):
 
-The API will have the following endpoints:
+bash
+Copy code
+npx nodemon server.js
+You should see:
 
-- `GET /api/products`: Get all products
-- `GET /api/products/:id`: Get a specific product
-- `POST /api/products`: Create a new product
-- `PUT /api/products/:id`: Update a product
-- `DELETE /api/products/:id`: Delete a product
+arduino
+Copy code
+🚀 Server running at http://localhost:3000
+📂 Folder Structure
+pgsql
+Copy code
 
-## Submission
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+week2-express-api/
+│
+├── server.js
+├── routes/
+│   └── productRoutes.js
+├── middleware/
+│   ├── logger.js
+│   ├── auth.js
+│   ├── validation.js
+│   └── errorHandler.js
+├── utils/
+│   └── errors.js
+├── .env.example
+└── README.md
 
-1. Complete all the required API endpoints
-2. Implement the middleware and error handling
-3. Document your API in the README.md
-4. Include examples of requests and responses
 
-## Resources
+🧭 API Documentation
+🏠 Base URL
+bash
+Copy code
+http://localhost:3000/api/products
+🔹 GET /api/products
+Description:
+Fetch all products, with optional filtering, pagination, and search.
 
-- [Express.js Documentation](https://expressjs.com/)
-- [RESTful API Design Best Practices](https://restfulapi.net/)
-- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) 
+Query Parameters:
+
+Name	Type	Description
+category	string	Filter by category
+search	string	Search products by name
+page	number	Page number (default: 1)
+limit	number	Results per page (default: 10)
+
+Example Request:
+
+bash
+Copy code
+curl "http://localhost:3000/api/products?category=electronics&page=1&limit=2"
+Example Response:
+
+json
+Copy code
+{
+  "total": 2,
+  "page": 1,
+  "limit": 2,
+  "data": [
+    {
+      "id": "1",
+      "name": "Laptop",
+      "description": "16GB RAM",
+      "price": 1200,
+      "category": "electronics",
+      "inStock": true
+    },
+    {
+      "id": "2",
+      "name": "Smartphone",
+      "description": "128GB storage",
+      "price": 800,
+      "category": "electronics",
+      "inStock": true
+    }
+  ]
+}
+🔹 GET /api/products/:id
+Description:
+Get a specific product by its ID.
+
+Example Request:
+
+bash
+Copy code
+curl http://localhost:3000/api/products/1
+Example Response:
+
+json
+Copy code
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "16GB RAM",
+  "price": 1200,
+  "category": "electronics",
+  "inStock": true
+}
+Error Example (404):
+
+json
+Copy code
+{ "error": "Product not found" }
+🔹 POST /api/products
+Protected Route: Requires x-api-key header.
+
+Description:
+Create a new product.
+
+Headers:
+
+makefile
+Copy code
+x-api-key: mysecretapikey123
+Content-Type: application/json
+Example Request:
+
+bash
+Copy code
+curl -X POST http://localhost:3000/api/products \
+-H "Content-Type: application/json" \
+-H "x-api-key: mysecretapikey123" \
+-d '{
+  "name": "Toaster",
+  "description": "2-slice toaster",
+  "price": 25,
+  "category": "kitchen",
+  "inStock": true
+}'
+Example Response:
+
+json
+Copy code
+{
+  "id": "b54f9e7a-7cdd-4f53-9b63-129fe0f88b7a",
+  "name": "Toaster",
+  "description": "2-slice toaster",
+  "price": 25,
+  "category": "kitchen",
+  "inStock": true
+}
+Error Example (400):
+
+json
+Copy code
+{ "error": "All fields are required and must be valid." }
+🔹 PUT /api/products/:id
+Protected Route: Requires x-api-key header.
+
+Description:
+Update an existing product.
+
+Example Request:
+
+bash
+Copy code
+curl -X PUT http://localhost:3000/api/products/1 \
+-H "Content-Type: application/json" \
+-H "x-api-key: mysecretapikey123" \
+-d '{
+  "price": 1300,
+  "inStock": false
+}'
+Example Response:
+
+json
+Copy code
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "16GB RAM",
+  "price": 1300,
+  "category": "electronics",
+  "inStock": false
+}
+🔹 DELETE /api/products/:id
+Protected Route: Requires x-api-key header.
+
+Description:
+Delete a product by its ID.
+
+Example Request:
+
+bash
+Copy code
+curl -X DELETE http://localhost:3000/api/products/3 \
+-H "x-api-key: mysecretapikey123"
+Example Response:
+
+json
+Copy code
+{
+  "message": "Product deleted successfully",
+  "product": {
+    "id": "3",
+    "name": "Coffee Maker",
+    "description": "Programmable",
+    "price": 50,
+    "category": "kitchen",
+    "inStock": false
+  }
+}
+🔹 GET /api/products/stats/count
+Description:
+Get product count by category.
+
+Example Request:
+
+bash
+Copy code
+curl http://localhost:3000/api/products/stats/count
+Example Response:
+
+json
+Copy code
+{
+  "electronics": 2,
+  "kitchen": 1
+}
+⚙️ Middleware Overview
+Middleware	Purpose
+logger.js	Logs request method, URL, and timestamp
+auth.js	Validates API key in headers
+validation.js	Checks product data before create/update
+errorHandler.js	Handles and formats all server errors
+
+🧪 Testing Tools
+You can test the API using:
+
+Postman
+
+Insomnia
+
+curl (via terminal)
+
+✅ Expected Output
+A working Express.js RESTful API with CRUD operations
+
+Properly structured middleware
+
+Comprehensive error handling
+
+Advanced query features: filter, pagination, search, and stats
